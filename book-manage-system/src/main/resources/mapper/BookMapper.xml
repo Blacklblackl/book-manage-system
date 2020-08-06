@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luojs.bookmanagesystem.book.dao.BookDAO">
+
+    <resultMap id="BookResultMap" type="com.luojs.bookmanagesystem.book.entity.Book">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="book_id" jdbcType="VARCHAR" property="bookId" />
+        <result column="book_name" jdbcType="VARCHAR" property="bookName" />
+        <result column="author_name" jdbcType="VARCHAR" property="authorName" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="keyword" jdbcType="VARCHAR" property="keyWord" />
+        <result column="introduction" jdbcType="VARCHAR" property="introduction" />
+        <result column="isbn" jdbcType="VARCHAR" property="isbn" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BookResultMap">
+        select *
+        from book
+        where id = #{id}
+    </select>
+
+    <select id="selectByBookId" parameterType="java.lang.String" resultMap="BookResultMap">
+        select *
+        from  book
+        where book_id = #{bookId}
+    </select>
+
+    <insert id="insert" parameterType="com.luojs.bookmanagesystem.book.entity.Book" useGeneratedKeys="true" keyProperty="id">
+        insert into book
+        (book_id, book_name, author_name, status, keyword, introduction, isbn, create_time, update_time)
+        values
+        (#{bookId,jdbcType=VARCHAR}, #{bookName,jdbcType=VARCHAR},
+        #{authorName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
+        #{keyWord,jdbcType=VARCHAR}, #{introduction,jdbcType=VARCHAR},
+        #{isbn,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="update" parameterType="com.luojs.bookmanagesystem.book.entity.Book">
+        update book
+        <set>
+            <if test="bookId != null">
+                book_id = #{bookId,jdbcType=VARCHAR},
+            </if>
+            <if test="bookName != null">
+                book_name = #{bookName,jdbcType=VARCHAR},
+            </if>
+            <if test="authorName != null">
+                author_name = #{authorName,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="keyWord != null">
+                keyword = #{keyWord,jdbcType=VARCHAR},
+            </if>
+            <if test="introduction != null">
+                introduction = #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="isbn != null">
+                isbn = #{isbn,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from book
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="getPageList" resultMap="BookResultMap">
+        select *
+        from  book
+        <where> 1=1
+            <if test="bookId != null and bookId != ''" >
+                and book_id = #{bookId,jdbcType=VARCHAR}
+            </if>
+            <if test="bookName != null and bookName != ''" >
+                and book_name like concat('%',#{bookName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="authorName != null and authorName != ''" >
+                and author_name like concat('%',#{authorName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="status != null" >
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+
+</mapper>
